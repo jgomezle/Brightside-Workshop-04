@@ -1,0 +1,46 @@
+bright profiles create endevor pe02brs-cust004 --host 1.1.1.1  --port 6002 --username cust004 --password cust004 --ru false --protocol http
+bright profiles create endevor-location marbles --instance ENDEVOR --environment DEV --system MARBLES --subsystem MARBLES --ccid CUST004 --maxrc 0 --stage-number 1 --comment CUST004 
+Bright endevor list elements
+bright endevor retrieve element MARBLE04 --typ COBOL --to-file MARBLE04.cbl --override-signout
+## MODIFY CODE
+bright endevor update element MARBLE04 --typ COBOL --from-file MARBLE04.cbl --override-signout
+bright endevor generate element MARBLE04 --type COBOL --override-signout
+bright endevor generate element MARBLE04 --type LNK --override-signout
+
+git clone https://github.com/chipset/Brightside-Workshop-04
+npm install gulp-cli -g
+npm install
+
+git status
+git config --global user.email "did it"
+git config --global user.name "did it"
+git commit -a -m "Adding tasks"
+git push
+
+gulp build
+
+##Update Jenkins and Credentials
+##Run the build
+
+
+## Set up zosmf profile
+bright profiles create zosmf pe02brs-cust004 --host 1.1.1.1  --port 443 --user cust004 --pass cust004 --reject-unauthorized false
+
+## List the members
+bright files list all-members "PRODUCT.NDVR.MARBLES.MARBLES.D1.LOADLIB"
+bright files list am "PRODUCT.NDVR.MARBLES.MARBLES.D1.DBRMLIB"
+
+## Copy the Libraries
+bright profiles create fmp pe02brs-cust004 --host 1.1.1.1  --port 6001 --user cust004 --pass cust004 --protocol http --reject-unauthorized false
+bright file-master-plus copy data-set "PRODUCT.NDVR.MARBLES.MARBLES.D1.LOADLIB" "CICS.TRAIN.MARBLES.LOADLIB" -m MARBLE04
+bright file-master-plus copy data-set "PRODUCT.NDVR.MARBLES.MARBLES.D1.DBRMLIB" "BRIGHT.MARBLES.DBRMLIB" -m MARBLE04
+
+## Submit a job and view it.
+bright jobs submit data-set "CUST004.MARBLES.JCL(MARBIND)"
+bright jobs view job-status-by-jobid XXXXXX
+
+## Activate Changes
+bright profiles create cics pe02brs-cust004 --host 1.1.1.1  --port 6000 --user cust004 --password cust004 --region-name CICSTRN1
+#### CICS REFRESH, I have to look up the command.
+bright console issue command "F CICSTRN1,MB04 CRE GREEN 1 2" --console-name CUST004
+bright cics refresh program "MARBLE04 --console-name CUST004
