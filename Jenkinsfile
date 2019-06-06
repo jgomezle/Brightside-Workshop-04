@@ -6,9 +6,13 @@ pipeline {
         ENDEVOR_CONNECTION="--port 6002 --protocol http --reject-unauthorized false"
         ENDEVOR_LOCATION=" --instance ENDEVOR --environment DEV --system MARBLES --subsystem MARBLES --ccid JENK04 --stage-number 1 --comment JENK04"
         ENDEVOR="$ENDEVOR_CONNECTION $ENDEVOR_LOCATION"
-        DEPLOY = "./jenkins/deploy.sh"
+        //DEPLOY = "./jenkins/deploy.sh"
         TEST = "./jenkins/test.sh"
         ZOWE_OPT_HOST=credentials('eosHost')
+        ZOWE_OPT_PORT="443"
+        ZOWE_OPT_REJECT_UNATHORIZED=false
+        FMP=' --port 6001 --protocol http --reject-unauthorized false'
+        CICS=' --port 6000 --region-name CICSTRN1'
     }
     stages {
         stage('local setup') {
@@ -20,6 +24,7 @@ pipeline {
                 sh 'npm install gulp-cli -g'
                 sh 'npm install'
             }
+
         }
         stage('build') {
             steps {
@@ -33,14 +38,15 @@ pipeline {
         }
         stage('deploy') {
             steps {
-                sh "chmod +x $DEPLOY && $DEPLOY"
+                //sh "chmod +x $DEPLOY && $DEPLOY"
                 //ZOWE_OPT_USER & ZOWE_OPT_PASSWORD are used to interact with z/OSMF and CICS
-                // withCredentials([usernamePassword(credentialsId: 'eosCreds', usernameVariable: 'ZOWE_OPT_USER', passwordVariable: 'ZOWE_OPT_PASSWORD')]) {
+                 withCredentials([usernamePassword(credentialsId: 'eosCreds', usernameVariable: 'ZOWE_OPT_USER', passwordVariable: 'ZOWE_OPT_PASSWORD')]) {
                 //     //ZOWE_OPT_PASS is used by FMP plugin
                 //     withCredentials([usernamePassword(credentialsId: 'eosCreds', usernameVariable: 'ZOWE_OPT_USER', passwordVariable: 'ZOWE_OPT_PASS')]) {
                 //        
                 //     }
-                // }
+                sh 'gulp deploy'
+                 }
             }
         }
         stage('test') {
