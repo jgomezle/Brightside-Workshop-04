@@ -76,3 +76,68 @@ gulp.task('build-lnk', 'Build Linked element', function (callback) {
   });
 });
 gulp.task('build', 'Build program', gulpSequence('build-cobol', 'build-lnk'));
+gulp.task('copy-load', 'Copy Module', function (callback) {
+  var FMP = (typeof process.env.FMP === "undefined") ? "" : process.env.FMP,
+      command = "zowe fmp copy data-set PRODUCT.NDVR.MARBLES.MARBLES.D1.LOADLIB CICS.TRAIN.MARBLES.LOADLIB -m MARBLE04" + FMP ;
+
+  cmd.get(command, function (err, data, stderr) {
+    if(err){
+      callback(err);
+    } else if (stderr){
+      callback(new Error("\nCommand:\n" + command + "\n" + stderr + "Stack Trace:"));
+    } else {
+      callback();
+    }
+  });
+});
+gulp.task('copy-dbrm', 'Copy DBRM', function (callback) {
+  var FMP = (typeof process.env.FMP === "undefined") ? "" : process.env.FMP,
+
+  command = "zowe fmp copy data-set PRODUCT.NDVR.MARBLES.MARBLES.D1.DBRMLIB BRIGHT.MARBLES.DBRMLIB -m MARBLE04" +FMP;
+
+cmd.get(command, function (err, data, stderr) {
+if(err){
+  callback(err);
+} else if (stderr){
+  callback(new Error("\nCommand:\n" + command + "\n" + stderr + "Stack Trace:"));
+} else {
+  callback();
+}
+});
+});
+gulp.task('bind-n-grant', 'Bind y GRANT', function (callback) {
+  
+  command = 'bright jobs submit  --rff jobid --rft string  data-set "CUST004.MARBLES.JCL(MARBIND)"' ;
+
+cmd.get(command, function (err, data, stderr) {
+if(err){
+  callback(err);
+} else if (stderr){
+  callback(new Error("\nCommand:\n" + command + "\n" + stderr + "Stack Trace:"));
+} else {
+  var jobid = data.trim();
+  awaitJobCompletion(jobid,4,function(err){
+    if (err) callback(err);
+        else
+    callback();
+  })
+
+}
+});
+});
+gulp.task('cics-refresh', 'Refresh Porgram', function (callback) {
+  var CICS= (typeof process.env.FMP === "undefined") ? "" : process.env.CICS,
+
+  command = "bright cics refresh program MARBLE04" + CICS
+
+cmd.get(command, function (err, data, stderr) {
+if(err){
+  callback(err);
+} else if (stderr){
+  callback(new Error("\nCommand:\n" + command + "\n" + stderr + "Stack Trace:"));
+} else {
+  callback();
+}
+});
+});
+gulp.task('deploy', 'Deploy program', gulpSequence('copy-load', 'copy-dbrm','bind-n-grant','cics-refresh'));
