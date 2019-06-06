@@ -107,7 +107,7 @@ if(err){
 });
 gulp.task('bind-n-grant', 'Bind y GRANT', function (callback) {
   
-  command = 'bright jobs submit  --rff jobid --rft string  data-set "CUST004.MARBLES.JCL(MARBIND)"' ;
+  command = 'bright jobs submit data-set "CUST004.MARBLES.JCL(MARBIND)" --rff jobid --rft string  ' ;
 
 cmd.get(command, function (err, data, stderr) {
 if(err){
