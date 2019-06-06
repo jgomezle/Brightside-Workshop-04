@@ -3,7 +3,7 @@ pipeline {
     environment {
         // Scripts
        // BUILD = "./jenkins/build.sh"
-        ENDEVOR_CONNECTION="--port 6002 --protocol http --reject-unathorized false"
+        ENDEVOR_CONNECTION="--port 6002 --protocol http --reject-unauthorized false"
         ENDEVOR_LOCATION=" --instance ENDEVOR --environment DEV --system MARBLES --subsystem MARBLES --ccid JENK04 --stage-number 1 --comment JENK04"
         ENDEVOR="$ENDEVOR_CONNECTION $ENDEVOR_LOCATION"
         DEPLOY = "./jenkins/deploy.sh"
