@@ -2,9 +2,13 @@ pipeline {
     agent { label 'ca-brightside-ce-agent' }
     environment {
         // Scripts
-        BUILD = "./jenkins/build.sh"
+       // BUILD = "./jenkins/build.sh"
+        ENDEVOR_CONNECTION="--port 6002 --protocol http --reject-unathorized false"
+        ENDEVOR_LOCATION=" --instance ENDEVOR --environment DEV --system MARBLES --subsystem MARBLES --ccid JENK04 --stage-number 1 --comment JENK04"
+        ENDEVOR="$ENDEVOR_CONNECTION $ENDEVOR_LOCATION"
         DEPLOY = "./jenkins/deploy.sh"
         TEST = "./jenkins/test.sh"
+        ZOWE_OPT_HOST=credentials('eosHost')
     }
     stages {
         stage('local setup') {
@@ -19,11 +23,12 @@ pipeline {
         }
         stage('build') {
             steps {
-                sh "chmod +x $BUILD && $BUILD"
+                //sh "chmod +x $BUILD && $BUILD"
                 //ZOWE_OPT_USERNAME & ZOWE_OPT_PASSWORD are used to interact with Endevor 
-                // withCredentials([usernamePassword(credentialsId: 'eosCreds', usernameVariable: 'ZOWE_OPT_USER', passwordVariable: 'ZOWE_OPT_PASSWORD')]) {
-                //    
-                // }
+                
+                withCredentials([usernamePassword(credentialsId: 'eosCreds', usernameVariable: 'ZOWE_OPT_USER', passwordVariable: 'ZOWE_OPT_PASSWORD')]) {
+                sh 'gulp build'
+                 }
             }
         }
         stage('deploy') {
