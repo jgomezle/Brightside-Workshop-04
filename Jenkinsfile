@@ -60,19 +60,19 @@ pipeline {
         }
     }
 
-    // post {
-    //     always {
-    //         // Archive build artifacts
-    //         archiveArtifacts artifacts: 'endevor-report-*', fingerprint:true
-    //         // Archive test report
-    //         publishHTML([allowMissing: false,
-    //             alwaysLinkToLastBuild: true,
-    //             keepAll: true,
-    //             reportDir: 'mochawesome-report',
-    //             reportFiles: 'mochawesome.html',
-    //             reportName: 'Test Results',
-    //             reportTitles: 'Test Report'
-    //             ])
-    //     }
-    // }
+     post {
+         always {
+             // Archive build artifacts
+             archiveArtifacts artifacts: 'endevor-report-*', fingerprint:true
+             // Archive test report
+             publishHTML([allowMissing: false,
+                 alwaysLinkToLastBuild: true,
+                 keepAll: true,
+                 reportDir: 'mochawesome-report',
+                 reportFiles: 'mochawesome.html',
+                 reportName: 'Test Results',
+                 reportTitles: 'Test Report'
+                 ])
+         }
+     }
 }
