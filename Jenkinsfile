@@ -10,7 +10,7 @@ pipeline {
         TEST = "./jenkins/test.sh"
         ZOWE_OPT_HOST=credentials('eosHost')
         ZOWE_OPT_PORT="443"
-        ZOWE_OPT_REJECT_UNATHORIZED=false
+        ZOWE_OPT_REJECT_UNAUTHORIZED=false
         FMP=' --port 6001 --protocol http --reject-unauthorized false'
         CICS=' --port 6000 --region-name CICSTRN1'
     }
