@@ -7,7 +7,7 @@ pipeline {
         ENDEVOR_LOCATION=" --instance ENDEVOR --environment DEV --system MARBLES --subsystem MARBLES --ccid JENK04 --stage-number 1 --comment JENK04"
         ENDEVOR="$ENDEVOR_CONNECTION $ENDEVOR_LOCATION"
         //DEPLOY = "./jenkins/deploy.sh"
-        TEST = "./jenkins/test.sh"
+        //TEST = "./jenkins/test.sh"
         ZOWE_OPT_HOST=credentials('eosHost')
         ZOWE_OPT_PORT="443"
         ZOWE_OPT_REJECT_UNAUTHORIZED=false
@@ -51,10 +51,11 @@ pipeline {
         }
         stage('test') {
             steps {
-                sh "chmod +x $TEST && $TEST"
+                // sh "chmod +x $TEST && $TEST"
                 //ZOWE_OPT_USER & ZOWE_OPT_PASS are used to interact with z/OSMF
-                // withCredentials([usernamePassword(credentialsId: 'eosCreds', usernameVariable: 'ZOWE_OPT_USER', passwordVariable: 'ZOWE_OPT_PASSWORD')]) {
-                // }
+                 withCredentials([usernamePassword(credentialsId: 'eosCreds', usernameVariable: 'ZOWE_OPT_USER', passwordVariable: 'ZOWE_OPT_PASSWORD')]) {
+                  sh 'npm test'
+                 }
             }
         }
     }
